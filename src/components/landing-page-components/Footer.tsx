@@ -1,6 +1,7 @@
 import { APP_NAME } from "@/constants/constants";
 import { Badge } from "../ui/badge";
 import Logo from "../utils/Logo";
+import { Link } from "react-router";
 
 const inProgressFeatures = [
   "download app",
@@ -47,12 +48,12 @@ export default function Footer() {
               <ul className="space-y-2 text-sm text-gray-600">
                 {section.links.map((link) => (
                   <li key={link}>
-                    <a
-                      href={`#${link.toLocaleLowerCase()}`}
+                    <Link
+                      to={`/${link.split(" ").join("-").toLocaleLowerCase()}`}
                       className="hover:text-blue-600 transition-colors"
                     >
                       {link}
-                    </a>
+                    </Link>
                     {inProgressFeatures.includes(link.toLocaleLowerCase()) && (
                       <Badge variant={"outline"}>in progress</Badge>
                     )}

@@ -3,7 +3,7 @@ import {
   comparisonRows,
   type railsmartType,
   type traditionalType,
-} from "@/data/comparison";
+} from "@/data/comparison-data";
 import { Check, X, Brain, BarChart3 } from "lucide-react";
 
 export default function Comparison() {

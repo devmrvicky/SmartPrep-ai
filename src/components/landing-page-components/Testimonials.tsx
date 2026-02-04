@@ -1,4 +1,4 @@
-import { testimonials } from "@/data/testimonials";
+import { testimonials } from "@/data/testimonials-data";
 import TestimonialCard from "./TestimonialCard";
 
 export default function Testimonials() {

@@ -7,6 +7,9 @@ import { Dashboard, Signup, Login, LandingPage } from "./page";
 import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
+import Exams from "./page/Exams.tsx";
+import NotFound from "./page/NotFound.tsx";
+import ExamCategory from "./page/ExamCategory.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,6 +17,14 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
+            <Route
+              path=""
+              element={
+                <PublicRoute>
+                  <LandingPage />
+                </PublicRoute>
+              }
+            />
             <Route
               path="/dashboard"
               element={
@@ -23,13 +34,14 @@ createRoot(document.getElementById("root")!).render(
               }
             />
             <Route
-              path=""
+              path="/exams"
               element={
                 <PublicRoute>
-                  <LandingPage />
+                  <Exams />
                 </PublicRoute>
               }
-            />
+            ></Route>
+            <Route path="/exams/:category" element={<ExamCategory />} />
 
             <Route
               path="/signup"
@@ -42,12 +54,13 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/login"
               element={
-                // <PublicRoute>
-                <Login />
-                // </PublicRoute>
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
               }
             />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
