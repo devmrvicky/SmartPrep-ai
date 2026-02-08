@@ -1,7 +1,3 @@
-import { Button } from "@/components/ui/button";
-import LoginBtn from "../Login-btn";
-import { Link } from "react-router";
-
 export default function Navigation() {
   const navItems = [
     { label: "Features", href: "#features" },
@@ -20,14 +16,6 @@ export default function Navigation() {
           {item.label}
         </a>
       ))}
-      <Link
-        to="/exams"
-        className="mr-4 text-gray-600 hover:text-gray-900 transition-colors"
-      >
-        Exams
-      </Link>
-      <LoginBtn />
-      <Button className="bg-blue-600 hover:bg-blue-700">Get Started</Button>
     </nav>
   );
 }

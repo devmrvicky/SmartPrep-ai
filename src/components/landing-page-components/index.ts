@@ -1,32 +1,5 @@
-// import Comparison from "./Comparison";
-// import CTA from "./CTA";
-// import DashboardMockup from "./DashboardMockup";
-// import FeatureCard from "./FeatureCard";
-// import Features from "./Features";
-// import Footer from "./Footer";
-// import Header from "./Header";
-// import Hero from "./Hero";
-// import Navigation from "./Navigation";
-// import Testimonials from "./Testimonials";
-// import TestimonialCard from "./TestimonialCard";
-// import TrustedBy from "./TrustedBy";
-
-// export {
-//   Comparison,
-//   CTA,
-//   DashboardMockup,
-//   FeatureCard,
-//   Features,
-//   Footer,
-//   Header,
-//   Hero,
-//   Navigation,
-//   Testimonials,
-//   TestimonialCard,
-//   TrustedBy,
-// };
 // Main Layout Components
-export { default as Header } from "./Header";
+export { default as Header } from "./LandingPageHeader";
 export { default as Footer } from "./Footer";
 
 // Reusable Components

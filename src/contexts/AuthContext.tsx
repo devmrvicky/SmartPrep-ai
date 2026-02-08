@@ -125,14 +125,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         avatar: null,
       };
 
-      const token = "demo_token_" + Date.now();
+      console.log({ newUser });
+      // return;
 
-      // Store auth data
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user", JSON.stringify(newUser));
+      // const token = "demo_token_" + Date.now();
 
-      setUser(newUser);
-      setIsAuthenticated(true);
+      // // Store auth data
+      // localStorage.setItem("authToken", token);
+      // localStorage.setItem("user", JSON.stringify(newUser));
+
+      // setUser(newUser);
+      // setIsAuthenticated(true);
 
       return { success: true, user: newUser };
     } catch (error: any) {

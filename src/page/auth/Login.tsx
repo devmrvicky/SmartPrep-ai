@@ -1,66 +1,44 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Link } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
-import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Mail, Lock } from "lucide-react";
 import Logo from "@/components/utils/Logo";
 import DarkModeToggle from "@/components/DarkModeToggle";
-// import Logo from "./Logo";
-// import DarkModeToggle from "./DarkModeToggle";
-// import { useAuth } from "../contexts/AuthContext";
+import Header from "@/components/Header";
+import SubmitErrorComp from "@/components/SubmitErrorComp";
+import InputController from "@/components/form-components/InputController";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { loginSchema, type loginSchemaInput } from "@/zod/loginSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Btn from "@/components/utils/Btn";
+import HorizontalDivider from "@/components/utils/HorizontalDivider";
 
 export default function Login() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { login } = useAuth();
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // const { login } = useAuth();
+  const [submitError, setSubmitError] = useState("");
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+    control,
+  } = useForm<loginSchemaInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  // Get the page they were trying to visit before login
-  const from = location.state?.from?.pathname || "/dashboard";
-
-  const handleSubmit = async (e: React.SubmitEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
+  const onSubmit: SubmitHandler<loginSchemaInput> = async (data) => {
+    setSubmitError("");
     try {
-      const result = await login(
-        formData.email,
-        formData.password,
-        formData.rememberMe,
-      );
-
-      if (result.success) {
-        // Redirect to the page they tried to visit or dashboard
-        navigate(from, { replace: true });
-      } else {
-        setError(
-          "error" in result ? result.error : "Login failed. Please try again.",
-        );
-      }
+      console.log(data);
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
-      console.error("Login error:", err);
-    } finally {
-      setLoading(false);
+      setSubmitError("An unexpected error occurred. Please try again.");
+      console.error("Signup error:", err);
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -72,23 +50,14 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
       {/* Header */}
-      <header className="border-b border-gray-200 dark:border-gray-800">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <Header
+        leftComponents={[
           <Link to="/">
             <Logo />
-          </Link>
-          <div className="flex items-center gap-4">
-            <DarkModeToggle />
-            <Link
-              to="/"
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 text-sm"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </Link>
-          </div>
-        </div>
-      </header>
+          </Link>,
+        ]}
+        rightComponents={[<DarkModeToggle />]}
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-16 flex items-center justify-center min-h-[calc(100vh-80px)]">
@@ -106,42 +75,35 @@ export default function Login() {
           {/* Login Card */}
           <Card className="border-2 border-gray-200 dark:border-gray-800 dark:bg-gray-800">
             <CardContent className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Error Message */}
-                {error && (
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                    <p className="text-red-600 dark:text-red-400 text-sm">
-                      {error}
-                    </p>
-                  </div>
-                )}
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                {/* General Error Message */}
+                {submitError && <SubmitErrorComp errorString={submitError} />}
 
                 {/* Email Field */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium mb-2 text-gray-900 dark:text-white"
-                  >
-                    Email Address
-                  </label>
-                  <div className="relative">
+                <InputController
+                  control={control}
+                  inputId="email"
+                  inputTitle="Email"
+                  inputName="email"
+                  placeholder="e.g example@gmail.com"
+                  inputIcon={
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                      placeholder="you@example.com"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
+                  }
+                />
 
                 {/* Password Field */}
-                <div>
+                <InputController
+                  control={control}
+                  inputType="password"
+                  inputId="password"
+                  inputTitle="Password"
+                  inputName="password"
+                  placeholder="*************"
+                  inputIcon={
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  }
+                />
+                {/* <div>
                   <label
                     htmlFor="password"
                     className="block text-sm font-medium mb-2 text-gray-900 dark:text-white"
@@ -174,23 +136,10 @@ export default function Login() {
                       )}
                     </button>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Remember Me & Forgot Password */}
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="rememberMe"
-                      checked={formData.rememberMe}
-                      onChange={handleChange}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600"
-                      disabled={loading}
-                    />
-                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                      Remember me
-                    </span>
-                  </label>
                   <Link
                     to="/forgot-password"
                     className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -200,42 +149,25 @@ export default function Login() {
                 </div>
 
                 {/* Submit Button */}
-                <Button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6"
-                  disabled={true}
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Signing in...
-                    </>
-                  ) : (
-                    "Sign In"
-                  )}
-                </Button>
+                <Btn
+                  btnType="submit"
+                  btnText="Login"
+                  btnTextOnHandeling="Login..."
+                  isHandeling={isSubmitting}
+                  disabled={isSubmitting}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-5"
+                />
 
                 {/* Divider */}
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
+                <HorizontalDivider dividerText="Or Login with" />
 
                 {/* Social Login Buttons */}
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-                    onClick={() => handleSocialLogin("Google")}
-                    disabled={loading}
-                  >
+                <Btn
+                  btnText="Signup with Google"
+                  disabled={isSubmitting}
+                  handleBtnClick={() => handleSocialLogin("Google")}
+                  isHandeling={false}
+                  icon={
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
@@ -254,25 +186,9 @@ export default function Login() {
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                       />
                     </svg>
-                    Google
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-                    onClick={() => handleSocialLogin("Facebook")}
-                    disabled={loading}
-                  >
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                    </svg>
-                    Facebook
-                  </Button>
-                </div>
+                  }
+                  className="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                />
               </form>
             </CardContent>
           </Card>
